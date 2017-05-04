@@ -29,23 +29,19 @@ defmodule FuzzionalTest do
   end
 
   test "supervised Boxes are faul-tolerant" do
-    Application.start([], [])
-
-    Supervisor.start_child(Fuzzional.Supervisor, [:orange])
+    Box.start_link(:orange)
     Supervisor.start_child(Fuzzional.Supervisor, [:blue])
 
     portal = Portal.transfer(:orange, :blue, [1,2,3])
-    assert Box.get(:orange) == [3,2,1]
-
-    Portal.push_right(portal)
-    assert Box.get(:orange) == [2,1]
-    assert Box.get(:blue) == [3]
 
     Process.unlink(Process.whereis(:blue))
     Process.exit(Process.whereis(:blue), :shutdown)
 
     Portal.push_right(portal)
-    assert Box.get(:orange) == [1]
-    assert Box.get(:blue) == [2]
+    assert Box.get(:orange) # => [2,1]
+    assert Box.get(:blue) # => [3]
   end
 end
+
+{:blue, "node@aws"}
+{:orange, "node@azure"}
