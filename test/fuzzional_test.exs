@@ -29,6 +29,8 @@ defmodule FuzzionalTest do
   end
 
   test "supervised Boxes are faul-tolerant" do
+    Application.start([], [])
+
     Box.start_link(:orange)
     Supervisor.start_child(Fuzzional.Supervisor, [:blue])
 
@@ -42,6 +44,3 @@ defmodule FuzzionalTest do
     assert Box.get(:blue) # => [3]
   end
 end
-
-{:blue, "node@aws"}
-{:orange, "node@azure"}
